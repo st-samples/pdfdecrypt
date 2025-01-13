@@ -6,5 +6,3 @@ Essentially, it runs a PDF through qpdf --decrypt and then uses pdftocairo from 
 
 
 Feel free to reach out and say hi if you have a project you want to discuss or if you have any questions about mine.
-
-python source to follow if I can find it on my old drive
