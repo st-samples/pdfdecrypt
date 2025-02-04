@@ -2,27 +2,38 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import os
 import subprocess
+import sys
+
+# Determine the base directory where the script is running
+if getattr(sys, 'frozen', False):
+    BASE_DIR = sys._MEIPASS  # If running as a PyInstaller exe
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # If running as a script
+
+# Set paths for QPDF and Poppler
+QPDF_PATH = os.path.join(BASE_DIR, "qpdf-10.6.3", "bin", "qpdf.exe")
+PDFTOCAIRO_PATH = os.path.join(BASE_DIR, "poppler-0.68.0", "bin", "pdftocairo.exe")
 
 def decrypt_and_convert_pdf(files, output_text):
     for file in files:
         directory = os.path.dirname(file)  # Get the directory of the input file
-        decrypted_file = os.path.join(directory, "decrypted temp file.pdf")
+        decrypted_file = os.path.join(directory, "decrypted_temp_file.pdf")
         converted_file = os.path.splitext(file)[0] + " DECRYPTED.pdf"
 
         # Construct the command to decrypt the PDF using qpdf
-        qpdf_command = ['qpdf', '--decrypt', file, decrypted_file]
+        qpdf_command = [QPDF_PATH, '--decrypt', file, decrypted_file]
 
         try:
-            # Execute the qpdf command without showing the command prompt window
-            subprocess.run(qpdf_command, check=True, creationflags=subprocess.CREATE_NO_WINDOW)
+            # Execute the qpdf command
+            subprocess.run(qpdf_command, check=True)
 
             output_text.insert(tk.END, "PDF decryption successful!\n")
 
             # Construct the command to convert the decrypted PDF using pdftocairo
-            pdftocairo_command = ['pdftocairo', '-pdf', decrypted_file, converted_file]
+            pdftocairo_command = [PDFTOCAIRO_PATH, '-pdf', decrypted_file, converted_file]
 
-            # Execute the pdftocairo command without showing the command prompt window
-            subprocess.run(pdftocairo_command, check=True, creationflags=subprocess.CREATE_NO_WINDOW)
+            # Execute the pdftocairo command
+            subprocess.run(pdftocairo_command, check=True)
 
             output_text.insert(tk.END, "PDF conversion successful!\n")
 
